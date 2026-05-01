@@ -18,25 +18,20 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
 
-    - name: Get libmosquitto ARM headers
-      run: |
-        sudo apt-get install -y libmosquitto-dev
-        # We just need the header for compilation - runtime lib is already on device
-
     - name: Build
       run: |
         arm-linux-gnueabihf-g++ \
           -o rfid_reader \
           src/main.cpp \
-          -I sdk/include \
-          -L sdk/lib \
+          -Isrc/sdk/include/fedm \
+          -Isrc/sdk/include/fedm-funit \
+          -Lsrc/sdk/lib \
           -lfedm \
           -lfeisp \
           -lfedm-funit \
           -Wl,-rpath,/home/app0 \
           -std=c++14 \
           -pthread \
-          -lmosquitto \
           -Wl,--allow-shlib-undefined
 
     - name: Upload binary
