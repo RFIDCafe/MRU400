@@ -29,7 +29,7 @@ jobs:
         ln -sf libfedm-funit.so.1 libfedm-funit.so
         ls -la
 
-    - name: Build
+    - name: Build rfid_reader
       run: |
         arm-linux-gnueabihf-g++ \
           -o rfid_reader \
@@ -45,9 +45,20 @@ jobs:
           -pthread \
           -Wl,--allow-shlib-undefined
 
-    - name: Upload binary
+    - name: Build set_brm
+      run: |
+        arm-linux-gnueabihf-gcc \
+          -o set_brm \
+          src/set_brm.c \
+          -std=c99 \
+          -Wall \
+          -static-libgcc
+
+    - name: Upload binaries
       uses: actions/upload-artifact@v4
       with:
         name: rfid_reader_arm
-        path: rfid_reader
+        path: |
+          rfid_reader
+          set_brm
         retention-days: 30
