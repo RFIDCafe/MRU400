@@ -1,0 +1,47 @@
+name: Build ARM RFID Reader
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install ARM cross-compiler
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
+
+    - name: Get libmosquitto ARM headers
+      run: |
+        sudo apt-get install -y libmosquitto-dev
+        # We just need the header for compilation - runtime lib is already on device
+
+    - name: Build
+      run: |
+        arm-linux-gnueabihf-g++ \
+          -o rfid_reader \
+          src/main.cpp \
+          -I sdk/include \
+          -L sdk/lib \
+          -lfedm \
+          -lfeisp \
+          -lfedm-funit \
+          -Wl,-rpath,/home/app0 \
+          -std=c++14 \
+          -pthread \
+          -lmosquitto \
+          -Wl,--allow-shlib-undefined
+
+    - name: Upload binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: rfid_reader_arm
+        path: rfid_reader
+        retention-days: 30
