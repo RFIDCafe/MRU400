@@ -152,7 +152,7 @@ int main(void)
      * ------------------------------------------------------------------ */
     int pi = 0;
     payload[pi++] = 0x8A;       /* Command: Read Configuration */
-    payload[pi++] = 0x00;       /* Device: always 0x00 */
+    payload[pi++] = 0x02;       /* Device: RF Controller */
     payload[pi++] = 0x01;       /* Bank: MAIN = 0x01 */
     payload[pi++] = 0x01;       /* Mode: always 0x01 */
     payload[pi++] = 0x00;       /* Block address MSB */
@@ -223,7 +223,7 @@ int main(void)
 
     pi = 0;
     payload[pi++] = 0x8B;       /* Command: Write Configuration */
-    payload[pi++] = 0x00;       /* Device: always 0x00 */
+    payload[pi++] = 0x02;       /* Device: RF Controller */
     payload[pi++] = 0x01;       /* Bank: MAIN = 0x01 */
     payload[pi++] = 0x01;       /* Mode: 0x01 */
     payload[pi++] = 0x01;       /* Block count: write 1 block */
