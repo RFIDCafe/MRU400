@@ -18,6 +18,17 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
 
+    - name: Create library symlinks
+      run: |
+        cd src/sdk/lib
+        ln -sf libfedm.so.6.10.1 libfedm.so.6
+        ln -sf libfedm.so.6 libfedm.so
+        ln -sf libfeisp.so.1.4.0 libfeisp.so.1
+        ln -sf libfeisp.so.1 libfeisp.so
+        ln -sf libfedm-funit.so.1.1.0 libfedm-funit.so.1
+        ln -sf libfedm-funit.so.1 libfedm-funit.so
+        ls -la
+
     - name: Build
       run: |
         arm-linux-gnueabihf-g++ \
