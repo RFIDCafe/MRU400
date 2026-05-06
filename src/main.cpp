@@ -69,7 +69,6 @@ int main(int argc, char *argv[]) {
             string epc = tag.epcC1G2_EpcToHexString();
             string tid = tag.epcC1G2_TidToHexString();
             string ts  = getCurrentTimestamp();
-            cerr << "DEBUG IsEpcAndTid=" << tag.epcC1G2_IsEpcAndTid() << " TID='" << tid << "'" << endl;
             if (!epc.empty()) {
                 cout << makeJson(epc, tid, ts) << endl;
                 cout.flush();
