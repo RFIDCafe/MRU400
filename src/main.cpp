@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
 
             TagItem tag = item->tag();
             string epc = tag.epcC1G2_EpcToHexString();
-            string tid = tag.epcC1G2_IsEpcAndTid() ? tag.epcC1G2_TidToHexString() : "";
+            string tid = tag.epcC1G2_TidToHexString();
             string ts  = getCurrentTimestamp();
 
             if (!epc.empty()) {
