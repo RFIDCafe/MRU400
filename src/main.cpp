@@ -40,4 +40,45 @@ int main(int argc, char *argv[]) {
     Connector cnn = Connector::createTcpConnector(ipAddr, port);
     int rc = reader->connect(cnn);
     if (rc != ErrorCode::Ok) {
-        cerr << "Failed
+        cerr << "Failed to connect to reader daemon: " << reader->lastErrorStatusText() << endl;
+        delete reader;
+        return 1;
+    }
+    rc = reader->tagEvent().initializeReaderBuffer();
+    if (rc != ErrorCode::Ok) {
+        cerr << "Failed to initialize reader buffer: " << reader->lastErrorStatusText() << endl;
+        reader->disconnect();
+        delete reader;
+        return 1;
+    }
+    while (g_running) {
+        rc = reader->tagEvent().readReaderBuffer(255);
+        if (rc < ErrorCode::Ok) {
+            cerr << "Read buffer error: " << reader->lastErrorStatusText() << endl;
+            break;
+        }
+        if (rc == ReaderStatus::DataTableNoData) {
+            sleep(1);
+            continue;
+        }
+        reader->tagEvent().clearReaderBuffer();
+        unique_ptr<const TagEventItem> item = reader->tagEvent().popItem();
+        while (item) {
+            if (!g_running) break;
+            TagItem tag = item->tag();
+            string epc = tag.epcC1G2_EpcToHexString();
+            string tid = tag.epcC1G2_TidToHexString();
+            string ts  = getCurrentTimestamp();
+            cerr << "DEBUG IsEpcAndTid=" << tag.epcC1G2_IsEpcAndTid() << " TID='" << tid << "'" << endl;
+            if (!epc.empty()) {
+                cout << makeJson(epc, tid, ts) << endl;
+                cout.flush();
+            }
+            item = reader->tagEvent().popItem();
+        }
+        sleep(1);
+    }
+    reader->disconnect();
+    delete reader;
+    return 0;
+}
